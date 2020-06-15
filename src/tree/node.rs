@@ -16,6 +16,18 @@ impl<T: Hash + Eq + Clone> Node<T> {
     }
   }
 
+  pub fn key_destroy(&mut self, ch :&T) {
+    self.child.remove(ch);
+  }
+
+  pub fn get_all_leaves_mut(&mut self) -> Vec<*mut Node<T>> {
+    let mut r = Vec::<*mut Node<T>>::new();
+    for (_, v) in self.child.iter_mut() {
+      r.push(&mut **v);
+    }
+    r
+  }
+
   pub fn contains_key(&self, ch: &T) -> bool {
     self.child.contains_key(ch)
   }
@@ -32,6 +44,10 @@ impl<T: Hash + Eq + Clone> Node<T> {
 
   pub fn key_alloc(&mut self, ch: &T) {
     self.child.insert(ch.clone(), Box::new(Node::new()));
+  }
+
+  pub fn get_child_cnt(&self) -> usize {
+    self.child.keys().len()
   }
 
   pub fn is_a_word(&self) -> bool {
