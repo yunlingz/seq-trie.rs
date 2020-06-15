@@ -3,12 +3,14 @@ use std::collections::HashMap;
 #[derive(Debug)]
 pub struct Node {
   child: HashMap<char, Box<Node>>,
+  word_cnt: usize,
 }
 
 impl Node {
   pub fn new() -> Node {
     Node {
       child: HashMap::new(),
+      word_cnt: 0,
     }
   }
 
@@ -30,7 +32,11 @@ impl Node {
     self.child.insert(*ch, node);
   }
 
-  pub fn is_end(&self) -> bool {
-    self.child.keys().len() == 0
+  pub fn is_a_word(&self) -> bool {
+    self.word_cnt != 0
+  }
+
+  pub fn mark_as_a_word(&mut self) {
+    self.word_cnt += 1
   }
 }
