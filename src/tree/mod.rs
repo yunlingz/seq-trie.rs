@@ -136,17 +136,22 @@ impl<T: Hash + Eq + Clone> TrieTree<T> {
       let mut tail_seq: Vec<&T> = vec![];
       // dfs
       unsafe {
-        let mut to_visit = vec![(seq.last().unwrap(), node)];
-        while let Some((ch, leaf)) = to_visit.pop() {
-          to_visit.extend((*leaf).get_all_leaves());
-          tail_seq.push(ch);
-          if (*leaf).is_a_word() {
-            r.push(
-              [seq[..seq.len() - 1].iter().collect(), tail_seq.clone()]
-                .concat(),
-            );
+        let mut to_visit = vec![Some((seq.last().unwrap(), node))];
+        while let Some(record) = to_visit.pop() {
+          if let Some((ch, leaf)) = record {
+            to_visit.push(None);
+            to_visit
+              .extend((*leaf).get_all_leaves().into_iter().map(|v| Some(v)));
+            tail_seq.push(ch);
+            if (*leaf).is_a_word() {
+              r.push(
+                [seq[..seq.len() - 1].iter().collect(), tail_seq.clone()]
+                  .concat(),
+              );
+            }
+          } else {
+            tail_seq.pop();
           }
-          // tail_seq.pop();
         }
       }
       return Some(r);

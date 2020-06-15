@@ -3,14 +3,14 @@ use trie_rs;
 fn main() {
   let mut m = trie_rs::TrieTree::new();
   let mut word_list = vec![];
-  for word in ["noe", "no", "n"].iter() {
+  for word in ["noe", "no", "n", "na"].iter() {
     let ch_vec: Vec<char> = word.chars().collect();
     word_list.push(ch_vec);
   }
   for word in word_list.iter() {
     m.insert(word);
   }
-  let r = m.prefix_match(&word_list[1]);
+  let r = m.prefix_match(&word_list[2]);
   println!("{:?}", r);
   // --------------
   // for word in ["noe", "aoe"].iter() {
