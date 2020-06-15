@@ -28,6 +28,14 @@ impl<T: Hash + Eq + Clone> Node<T> {
     r
   }
 
+  pub fn get_all_leaves(&self) -> Vec<(&T, *const Node<T>)> {
+    let mut r = Vec::<(&T, *const Node<T>)>::new();
+    for (k, v) in self.child.iter() {
+      r.push((k, &**v))
+    }
+    r
+  }
+
   pub fn contains_key(&self, ch: &T) -> bool {
     self.child.contains_key(ch)
   }
@@ -60,5 +68,9 @@ impl<T: Hash + Eq + Clone> Node<T> {
 
   pub fn unmark(&mut self) {
     self.elem_cnt -= 1;
+  }
+
+  pub fn get_elem_cnt(&self) -> usize {
+    self.elem_cnt
   }
 }

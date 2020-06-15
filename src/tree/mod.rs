@@ -103,36 +103,55 @@ impl<T: Hash + Eq + Clone> TrieTree<T> {
     Some(curr_node)
   }
 
-  pub fn contains(&self, seq: &[T]) -> bool {
+  pub fn key_cnt(&self, seq: &[T]) -> Option<usize> {
     if seq.len() == 0 {
-      return false;
+      return None;
     }
     if let Some(node) = self.get_prefix_end(seq) {
       unsafe {
         if (*node).is_a_word() {
-          true
+          Some((*node).get_elem_cnt())
         } else {
-          false
+          None
         }
       }
     } else {
-      false
+      None
     }
   }
 
-  pub fn contains_prefix(&self, seq: &[T]) -> bool {
+  pub fn prefix_vaild(&self, seq: &[T]) -> bool {
     if seq.len() == 0 {
       return false;
     }
     self.get_prefix_end(seq).is_some()
   }
 
-  // pub fn top_n(&self, prefix: &str, max_n: usize) -> Option<Vec<String>> {
-  //   if let Some(node) = self.get_prefix_end(prefix) {
-  //     let mut r = vec![];
-  //     return Some(r);
-  //   } else {
-  //     None
-  //   }
-  // }
+  pub fn prefix_match<'a>(&self, seq: &'a [T]) -> Option<Vec<Vec<&'a T>>> {
+    if seq.len() == 0 {
+      return None;
+    }
+    if let Some(node) = self.get_prefix_end(seq) {
+      let mut r = vec![];
+      let mut tail_seq: Vec<&T> = vec![];
+      // dfs
+      unsafe {
+        let mut to_visit = vec![(seq.last().unwrap(), node)];
+        while let Some((ch, leaf)) = to_visit.pop() {
+          to_visit.extend((*leaf).get_all_leaves());
+          tail_seq.push(ch);
+          if (*leaf).is_a_word() {
+            r.push(
+              [seq[..seq.len() - 1].iter().collect(), tail_seq.clone()]
+                .concat(),
+            );
+          }
+          // tail_seq.pop();
+        }
+      }
+      return Some(r);
+    } else {
+      None
+    }
+  }
 }
