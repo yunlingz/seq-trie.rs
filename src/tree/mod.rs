@@ -1,19 +1,27 @@
 mod node;
-use node::TreeNode;
+use node::Node;
 
 #[derive(Debug)]
-pub struct Tree<T> {
-    root: Option<TreeNode<T>>,
+pub struct Tree {
+  root: Box<Node>,
 }
 
-impl<T> Tree<T> {
-    pub fn new() -> Tree<T> {
-        Tree { root: None }
+impl Tree {
+  pub fn new() -> Tree {
+    Tree {
+      root: Box::new(Node::new()),
     }
+  }
 
-    pub fn insert(&mut self, val: T) {
-        if self.root.is_none() {
-            self.root = Some(TreeNode::new(val));
+  pub fn insert(&mut self, word: &String) {
+    let mut curr_node: *mut Node = &mut *self.root;
+    for ch in word.chars() {
+      unsafe {
+        if !(*curr_node).contains_key(&ch) {
+          (*curr_node).insert(&ch, Box::new(Node::new()));
         }
+        curr_node = (*curr_node).get(&ch);
+      }
     }
+  }
 }
