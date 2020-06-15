@@ -16,7 +16,7 @@ impl<T: Hash + Eq + Clone> Node<T> {
     }
   }
 
-  pub fn key_destroy(&mut self, ch :&T) {
+  pub fn key_destroy(&mut self, ch: &T) {
     self.child.remove(ch);
   }
 
@@ -46,8 +46,8 @@ impl<T: Hash + Eq + Clone> Node<T> {
     self.child.insert(ch.clone(), Box::new(Node::new()));
   }
 
-  pub fn get_child_cnt(&self) -> usize {
-    self.child.keys().len()
+  pub fn cannot_be_deleted(&self) -> bool {
+    self.is_a_word() || self.child.keys().len() > 1
   }
 
   pub fn is_a_word(&self) -> bool {

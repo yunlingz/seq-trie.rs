@@ -2,7 +2,6 @@ mod node;
 use node::Node;
 
 use std::cmp::Eq;
-use std::fmt;
 use std::hash::Hash;
 
 #[derive(Debug)]
@@ -10,7 +9,7 @@ pub struct TrieTree<T: Hash + Eq + Clone> {
   root: Box<Node<T>>,
 }
 
-impl<T: Hash + Eq + Clone + fmt::Debug> TrieTree<T> {
+impl<T: Hash + Eq + Clone> TrieTree<T> {
   pub fn new() -> TrieTree<T> {
     TrieTree {
       root: Box::new(Node::new()),
@@ -42,33 +41,31 @@ impl<T: Hash + Eq + Clone + fmt::Debug> TrieTree<T> {
         if (*t_node).is_a_word() {
           (*t_node).unmark();
           if !(*t_node).is_a_word() {
-            let has_alive_child = |root_node: *mut Node<T>| -> bool {
+            let has_alive_child = || -> bool {
               // dfs
-              let mut to_visit = vec![root_node];
+              let mut to_visit = vec![t_node];
               while let Some(exp_node) = to_visit.pop() {
                 to_visit.extend((*exp_node).get_all_leaves_mut());
-                if (*exp_node).is_a_word() || (*exp_node).get_child_cnt() > 1 {
+                if (*exp_node).cannot_be_deleted() {
                   return true;
                 }
               }
               false
             };
-            if has_alive_child(t_node) {
+            if has_alive_child() {
               return;
             }
-            println!("start to delete");
             // delete
             let mut curr_node: *mut Node<T> = &mut *self.root;
             let mut last_alive_node = curr_node;
             let mut to_del_ch = &seq[0];
             for ch in seq.iter() {
-              if (*curr_node).is_a_word() || (*curr_node).get_child_cnt() > 1 {
+              if (*curr_node).cannot_be_deleted() {
                 last_alive_node = curr_node;
                 to_del_ch = ch;
               }
               curr_node = (*curr_node).key_next_mut(ch);
             }
-            println!("ch = {:?}", to_del_ch);
             (*last_alive_node).key_destroy(to_del_ch);
           }
         }
@@ -77,6 +74,7 @@ impl<T: Hash + Eq + Clone + fmt::Debug> TrieTree<T> {
   }
 
   fn get_prefix_end(&self, seq: &[T]) -> Option<*const Node<T>> {
+    assert!(seq.len() != 0);
     let mut curr_node: *const Node<T> = &*self.root;
     for ch in seq.iter() {
       unsafe {
@@ -91,6 +89,7 @@ impl<T: Hash + Eq + Clone + fmt::Debug> TrieTree<T> {
   }
 
   fn get_prefix_end_mut(&mut self, seq: &[T]) -> Option<*mut Node<T>> {
+    assert!(seq.len() != 0);
     let mut curr_node: *mut Node<T> = &mut *self.root;
     for ch in seq.iter() {
       unsafe {

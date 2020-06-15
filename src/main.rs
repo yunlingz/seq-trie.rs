@@ -2,24 +2,26 @@ use trie_rs;
 
 fn main() {
   let mut m = trie_rs::TrieTree::new();
-  println!("{:#?}", m);
-  println!("-------------");
   let mut word_list = vec![];
-  for word in ["noe", "no"].iter() {
+  for word in ["noe", "no", "na", "n", "anaet", "ane"].iter() {
     let ch_vec: Vec<char> = word.chars().collect();
     word_list.push(ch_vec);
   }
+  // test
+  let mut insert_string_record = vec![];
+  insert_string_record.push(format!("{:#?}", m));
   for word in word_list.iter() {
     m.insert(word);
-    println!("{:#?}", m);
+    insert_string_record.push(format!("{:#?}", m));
   }
-  println!("-------------");
-  // // let tmp: [char; 0] = [];
-  // // m.insert(&tmp);
-  // println!("{:#?}", m);
-  // println!("{:#?}", m.contains(&word_list[0][..3]));
-  for word in word_list.iter() {
+  let mut remove_string_record = vec![];
+  remove_string_record.push(format!("{:#?}", m));
+  for word in word_list.iter().rev() {
     m.remove(word);
-    println!("{:#?}", m);
+    remove_string_record.push(format!("{:#?}", m));
+  }
+  remove_string_record = remove_string_record.into_iter().rev().collect();
+  for i in 0..insert_string_record.len() {
+    println!("{}", insert_string_record[i] == remove_string_record[i]);
   }
 }
