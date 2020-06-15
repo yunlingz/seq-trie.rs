@@ -2,12 +2,14 @@ use trie_rs;
 
 fn main() {
   let mut m = trie_rs::TrieTree::new();
-  m.insert("name");
-  m.insert("nam");
-  m.insert("nam");
-  m.insert("nati");
-  m.insert("nami");
-  m.insert("我们");
+  let mut word_list = vec![];
+  for word in ["name", "time"].iter() {
+    let ch_vec: Vec<char> = word.chars().collect();
+    word_list.push(ch_vec);
+  }
+  for word in word_list.iter() {
+    m.insert(word);
+  }
   println!("{:#?}", m);
-  println!("{:#?}", m.contains("nam"));
+  println!("{:#?}", m.contains(&word_list[0][..3]));
 }

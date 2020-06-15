@@ -1,42 +1,44 @@
 use std::collections::HashMap;
+use std::hash::Hash;
+use std::cmp::Eq;
 
 #[derive(Debug)]
-pub struct Node {
-  child: HashMap<char, Box<Node>>,
-  word_cnt: usize,
+pub struct Node<T: Hash + Eq + Clone> {
+  child: HashMap<T, Box<Node<T>>>,
+  elem_cnt: usize,
 }
 
-impl Node {
-  pub fn new() -> Node {
+impl<T: Hash + Eq + Clone> Node<T> {
+  pub fn new() -> Node<T> {
     Node {
       child: HashMap::new(),
-      word_cnt: 0,
+      elem_cnt: 0,
     }
   }
 
-  pub fn contains_key(&self, ch: &char) -> bool {
+  pub fn contains_key(&self, ch: &T) -> bool {
     self.child.contains_key(ch)
   }
 
-  pub fn next(&self, ch: &char) -> *const Node {
-    let node = self.child.get(&ch).unwrap();
+  pub fn next(&self, ch: &T) -> *const Node<T> {
+    let node = self.child.get(ch).unwrap();
     return &**node;
   }
 
-  pub fn next_mut(&mut self, ch: &char) -> *mut Node {
-    let node = self.child.get_mut(&ch).unwrap();
+  pub fn next_mut(&mut self, ch: &T) -> *mut Node<T> {
+    let node = self.child.get_mut(ch).unwrap();
     return &mut **node;
   }
 
-  pub fn insert(&mut self, ch: &char, node: Box<Node>) {
-    self.child.insert(*ch, node);
+  pub fn key_alloc(&mut self, ch: &T) {
+    self.child.insert(ch.clone(), Box::new(Node::new()));
   }
 
   pub fn is_a_word(&self) -> bool {
-    self.word_cnt != 0
+    self.elem_cnt != 0
   }
 
   pub fn mark_as_a_word(&mut self) {
-    self.word_cnt += 1
+    self.elem_cnt += 1
   }
 }
