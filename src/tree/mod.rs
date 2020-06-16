@@ -120,6 +120,9 @@ impl<T: Hash + Eq + Clone> TrieTree<T> {
         if seq.len() == 0 {
             return None;
         }
+        if maxn == 0 {
+            return Some(vec![]);
+        }
         if let Some(node) = self.get_prefix_end(seq) {
             let mut r = vec![];
             let mut tail_seq: Vec<&T> = vec![];
