@@ -25,10 +25,10 @@ impl<T: Hash + Eq + Clone> Node<T> {
         self.child.remove(ch);
     }
 
-    pub fn get_all_leaves_mut(&mut self) -> Vec<*mut Node<T>> {
-        let mut r = Vec::<*mut Node<T>>::new();
-        for (_, v) in self.child.iter_mut() {
-            r.push(&mut **v);
+    pub fn get_all_leaves_mut(&mut self) -> Vec<(&T, *mut Node<T>)> {
+        let mut r = Vec::<(&T, *mut Node<T>)>::new();
+        for (k, v) in self.child.iter_mut() {
+            r.push((k, &mut **v))
         }
         r
     }

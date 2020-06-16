@@ -51,7 +51,9 @@ impl<T: Hash + Eq + Clone> TrieTree<T> {
                             // dfs
                             let mut to_visit = vec![t_node];
                             while let Some(exp_node) = to_visit.pop() {
-                                to_visit.extend((*exp_node).get_all_leaves_mut());
+                                to_visit.extend(
+                                    (*exp_node).get_all_leaves_mut().into_iter().map(|(_, v)| v),
+                                );
                                 if (*exp_node).cannot_be_deleted() {
                                     return true;
                                 }
