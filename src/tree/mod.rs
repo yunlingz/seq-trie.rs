@@ -8,6 +8,7 @@ use node::Node;
 
 use std::cmp::Eq;
 use std::hash::Hash;
+use std::usize;
 
 #[derive(Debug)]
 pub struct TrieTree<T: Hash + Eq + Clone> {
@@ -108,23 +109,6 @@ impl<T: Hash + Eq + Clone> TrieTree<T> {
         Some(curr_node)
     }
 
-    // pub fn key_cnt(&self, seq: &[T]) -> Option<usize> {
-    //     if seq.len() == 0 {
-    //         return None;
-    //     }
-    //     if let Some(node) = self.get_prefix_end(seq) {
-    //         unsafe {
-    //             if (*node).is_a_seq() {
-    //                 Some((*node).get_elem_cnt())
-    //             } else {
-    //                 None
-    //             }
-    //         }
-    //     } else {
-    //         None
-    //     }
-    // }
-
     pub fn prefix_vaild(&self, seq: &[T]) -> bool {
         if seq.len() == 0 {
             return false;
@@ -132,7 +116,7 @@ impl<T: Hash + Eq + Clone> TrieTree<T> {
         self.get_prefix_end(seq).is_some()
     }
 
-    pub fn prefix_match<'a>(&self, seq: &'a [T]) -> Option<Vec<Vec<&'a T>>> {
+    pub fn prefix_match_maxn<'a>(&self, seq: &'a [T], maxn: usize) -> Option<Vec<Vec<&'a T>>> {
         if seq.len() == 0 {
             return None;
         }
@@ -151,6 +135,9 @@ impl<T: Hash + Eq + Clone> TrieTree<T> {
                             r.push(
                                 [seq[..seq.len() - 1].iter().collect(), tail_seq.clone()].concat(),
                             );
+                            if r.len() == maxn {
+                                break;
+                            }
                         }
                     } else {
                         tail_seq.pop();
@@ -161,5 +148,9 @@ impl<T: Hash + Eq + Clone> TrieTree<T> {
         } else {
             None
         }
+    }
+
+    pub fn prefix_match<'a>(&self, seq: &'a [T]) -> Option<Vec<Vec<&'a T>>> {
+        self.prefix_match_maxn(seq, usize::MAX)
     }
 }
