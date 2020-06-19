@@ -16,7 +16,7 @@ pub struct TrieTree<T: Hash + Eq + Clone> {
     is_dirty: bool,
 }
 
-impl<T: Hash + Eq + Clone> TrieTree<T> {
+impl<'a, T: 'a + Hash + Eq + Clone> TrieTree<T> {
     pub fn new() -> TrieTree<T> {
         TrieTree {
             root: Box::new(Node::new()),
@@ -36,6 +36,16 @@ impl<T: Hash + Eq + Clone> TrieTree<T> {
             curr_node = curr_node.key_next_mut(ch);
         }
         curr_node.mark()
+    }
+
+    pub fn insert_collection<U>(&mut self, mut collect: U) -> bool
+    where
+        U: Iterator<Item = &'a [T]>,
+    {
+        while let Some(item) = collect.next() {
+            self.insert(item);
+        }
+        false
     }
 
     pub fn remove(&mut self, seq: &[T]) -> bool {
@@ -66,6 +76,10 @@ impl<T: Hash + Eq + Clone> TrieTree<T> {
         // --- gc end ---
         self.is_dirty = false;
         true
+    }
+
+    pub fn contains(&self, seq: &[T]) -> bool {
+        self.get_prefix_end(seq).is_some()
     }
 
     fn get_prefix_end(&self, seq: &[T]) -> Option<&Box<Node<T>>> {
@@ -101,7 +115,7 @@ impl<T: Hash + Eq + Clone> TrieTree<T> {
         self.get_prefix_end(seq).is_some()
     }
 
-    pub fn prefix_match_maxn<'a>(&'a self, seq: &'a [T], maxn: usize) -> Option<Vec<Vec<&'a T>>> {
+    pub fn prefix_match_maxn(&'a self, seq: &'a [T], maxn: usize) -> Option<Vec<Vec<&'a T>>> {
         if seq.len() == 0 {
             return None;
         }
@@ -134,7 +148,7 @@ impl<T: Hash + Eq + Clone> TrieTree<T> {
         }
     }
 
-    pub fn prefix_match<'a>(&'a self, seq: &'a [T]) -> Option<Vec<Vec<&'a T>>> {
+    pub fn prefix_match(&'a self, seq: &'a [T]) -> Option<Vec<Vec<&'a T>>> {
         self.prefix_match_maxn(seq, usize::MAX)
     }
 }
