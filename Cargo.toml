@@ -1,6 +1,6 @@
 [package]
 name = "seq_trie"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["github.com/chuling <meetchuling@gmail.com>"]
 edition = "2018"
 
