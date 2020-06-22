@@ -39,7 +39,7 @@ impl<'a, T: 'a + Hash + Eq + Clone> TrieTree<T> {
     curr_node.mark()
   }
 
-  pub fn insert_collection<U>(&mut self, mut collect: U) -> bool
+  pub fn insert_iterator<U>(&mut self, mut collect: U) -> bool
   where
     U: Iterator<Item = Vec<T>>,
   {
@@ -49,7 +49,7 @@ impl<'a, T: 'a + Hash + Eq + Clone> TrieTree<T> {
     false
   }
 
-  pub fn remove(&mut self, seq: &Vec<T>) -> bool {
+  pub fn remove(&mut self, seq: &[T]) -> bool {
     if seq.len() == 0 {
       return false;
     }
@@ -79,11 +79,11 @@ impl<'a, T: 'a + Hash + Eq + Clone> TrieTree<T> {
     true
   }
 
-  pub fn contains(&self, seq: &Vec<T>) -> bool {
+  pub fn contains(&self, seq: &[T]) -> bool {
     self.get_prefix_end(seq).is_some()
   }
 
-  fn get_prefix_end(&self, seq: &Vec<T>) -> Option<&Box<Node<T>>> {
+  fn get_prefix_end(&self, seq: &[T]) -> Option<&Box<Node<T>>> {
     assert!(seq.len() != 0);
     let mut curr_node = &self.root;
     for ch in seq.iter() {
@@ -96,7 +96,7 @@ impl<'a, T: 'a + Hash + Eq + Clone> TrieTree<T> {
     Some(curr_node)
   }
 
-  fn get_prefix_end_mut(&mut self, seq: &Vec<T>) -> Option<&mut Box<Node<T>>> {
+  fn get_prefix_end_mut(&mut self, seq: &[T]) -> Option<&mut Box<Node<T>>> {
     assert!(seq.len() != 0);
     let mut curr_node = &mut self.root;
     for ch in seq.iter() {
@@ -109,7 +109,7 @@ impl<'a, T: 'a + Hash + Eq + Clone> TrieTree<T> {
     Some(curr_node)
   }
 
-  pub fn prefix_vaild(&self, seq: &Vec<T>) -> bool {
+  pub fn prefix_vaild(&self, seq: &[T]) -> bool {
     if seq.len() == 0 {
       return false;
     }
@@ -118,7 +118,7 @@ impl<'a, T: 'a + Hash + Eq + Clone> TrieTree<T> {
 
   pub fn prefix_match_maxn(
     &'a self,
-    seq: &'a Vec<T>,
+    seq: &'a [T],
     maxn: usize,
   ) -> Option<Vec<Vec<&'a T>>> {
     if seq.len() == 0 {
@@ -156,7 +156,7 @@ impl<'a, T: 'a + Hash + Eq + Clone> TrieTree<T> {
     }
   }
 
-  pub fn prefix_match(&'a self, seq: &'a Vec<T>) -> Option<Vec<Vec<&'a T>>> {
+  pub fn prefix_match(&'a self, seq: &'a [T]) -> Option<Vec<Vec<&'a T>>> {
     self.prefix_match_maxn(seq, usize::MAX)
   }
 }
